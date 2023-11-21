@@ -1,18 +1,24 @@
 package com.cavsteek.basic.spring.security.entities;
 
 
+import jakarta.persistence.*;
+import lombok.Data;
 
 @Data
 @Entity
 @Table(name = "user")
 public class User {
     @Id
-    @GeneratedValue(strategy = GeneratedType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     private String firstname;
+
     private String lastname;
+
     private String email;
+
     private String password;
-    @Enumerated(EnumType.STRING)
+
     private Role role;
 }
