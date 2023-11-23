@@ -1,5 +1,6 @@
 package com.cavsteek.basic.spring.security.services.impl;
 
+import com.cavsteek.basic.spring.security.services.JWTService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -13,9 +14,9 @@ import java.util.Date;
 import java.util.function.Function;
 
 @Service
-public class JWTServiceImpl {
+public class JWTServiceImpl implements JWTService {
 
-    private String generateToken(UserDetails userDetails){
+    public String generateToken(UserDetails userDetails){
         return Jwts
                 .builder().setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
@@ -24,7 +25,7 @@ public class JWTServiceImpl {
                 .compact();
     }
 
-    public String extractUsername(String token){
+    public String extractUserName(String token){
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -43,7 +44,7 @@ public class JWTServiceImpl {
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails){
-        final String username = extractUsername(token);
+        final String username = extractUserName(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
