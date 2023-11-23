@@ -1,6 +1,7 @@
 package com.cavsteek.basic.spring.security.services.impl;
 
 import com.cavsteek.basic.spring.security.dto.JwtAuthenticationResponse;
+import com.cavsteek.basic.spring.security.dto.RefreshTokenRequest;
 import com.cavsteek.basic.spring.security.dto.SignUpRequest;
 import com.cavsteek.basic.spring.security.dto.SigninRequest;
 import com.cavsteek.basic.spring.security.entities.Role;
@@ -43,7 +44,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse();
 
         jwtAuthenticationResponse.setToken(jwt);
-        jwtAuthenticationResponse.setToken(refreshToken);
+        jwtAuthenticationResponse.setRefreshToken(refreshToken);
         return jwtAuthenticationResponse;
+    }
+
+    public JwtAuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest){
+        String userEmail = jwtService.extractUserName(refreshTokenRequest.getToken());
+        User user = userRepository.findByEmail(userEmail).orElseThrow();
+        if (jwtService.isTokenValid(refreshTokenRequest.getToken(), user)){
+            var jwt = jwtService.generateToken(user);
+
+            JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse();
+
+            jwtAuthenticationResponse.setToken(jwt);
+            jwtAuthenticationResponse.setRefreshToken(refreshTokenRequest.getToken());
+            return jwtAuthenticationResponse;
+        }
+        return null;
     }
 }
